@@ -1,0 +1,686 @@
+{
+	"info": {
+		"_postman_id": "5d88f685-75a6-4b18-8d0a-9f0ae1cf61c8",
+		"name": "CA MAR",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "post addresses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "93f4b96a-62a3-48b8-9c65-9b111da35908",
+						"exec": [
+							"if(responseCode.code === 200) {\r",
+							"    tests[\"Backend is available, response code is 200\"] = true;\r",
+							"} else if (responseCode.code === 401) {\r",
+							"    tests[\"Not authorised, Check access token or Log in\"] = false;\r",
+							"} else if (responseCode.code === 403) {\r",
+							"    tests[\"Forbiden\"] = false;\r",
+							"} else if (responseCode.code === 404) {\r",
+							"    tests[\"Not Found. Check if you made correct request\"] = false;\r",
+							"} else if (responseCode.code === 422) {\r",
+							"    tests[\"The instance is not valid\"] = false;\r",
+							"} else {\r",
+							"    tests[\"Something went wrong. Check response body\"] = false;\r",
+							"}\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"id\");    \r",
+							"});\r",
+							"pm.test(\"Response size is less than 10KB\", function () {\r",
+							"    pm.expect(pm.response.responseSize).to.be.below(10000);\r",
+							"});\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"id\", jsonData.id);\r",
+							"\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cc0507d3-73b5-4c55-8c39-b5ceb9e9baeb",
+						"exec": [
+							"pm.environment.unset(\"id\");\r",
+							"pm.environment.unset(\"company\");\r",
+							"\r",
+							"pm.environment.unset(\"zipCode\");\r",
+							"pm.environment.unset(\"addressLine2\");\r",
+							"\r",
+							"pm.environment.set(\"zipCode\", Math.floor(Math.random()*90000) + 10000);\r",
+							"\r",
+							"pm.environment.set(\"addressLine2\", Math.floor(Math.random()*900) + 100);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "CvnZIKcKt35m9QA_2QLsPtOGQq7PKWmF6xo7drvPxzg.eyJpbnN0YW5jZUlkIjoiZjQ2Y2Q1MDItZjcyZi00NGY3LTk2MzgtNWRhMWRlYjBiNGU3IiwiYXBwRGVmSWQiOiIxNTA1Yjc3NS1lODg1LWViMWItYjY2NS0xZTQ4NWQ5YmY5MGUiLCJtZXRhU2l0ZUlkIjoiMjhiNzkzZDYtNTQyNC00MDU4LTgwNDktMDI2YTRkYjAyODJmIiwic2lnbkRhdGUiOiIyMDIwLTA2LTEzVDA1OjQyOjIzLjUwMVoiLCJ1aWQiOiIyYjQ4NDJlNC05OWVhLTQ0YTMtYTQ0Ny1jZDZlNTA0ZTJmMjEiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjkxMGQ3NGUyLTgxNmEtNDUwZi1hMTI3LTRlZmU2MmVhMDZlZiIsImJpVG9rZW4iOiJkY2RiNDZkNC1hMzBiLTA0YWYtMTY3MS01ZmNiOTMwMDljYzgiLCJzaXRlT3duZXJJZCI6ImY5MTRmMTFjLWFhYjMtNDUyNy04ZDRlLWJhYjc2MjE0M2E2MCIsImV4cGlyYXRpb25EYXRlIjoiMjAyMC0wNi0xM1QwOTo0MjoyMy41MDFaIiwiaGFzVXNlclJvbGUiOmZhbHNlfQ"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"address\":{\r\n      \"fullName\":{\r\n         \"firstName\":\"{{$randomFirstName}}\",\r\n         \"lastName\":\"{{$randomLastName}}\"\r\n      },\r\n      \"company\":\"{{$randomCompanyName}}\",\r\n      \"taxInfo\":{\r\n         \"id\":null,\r\n         \"type\":null\r\n      },\r\n      \"addressLine1\":\"{{$randomStreetAddress}}\",\r\n      \"addressLine2\":\"Unit {{addressLine2}}\",\r\n      \"street\":{\r\n         \"name\":null,\r\n         \"number\":null\r\n      },\r\n      \"city\":\"{{$randomCity}}\",\r\n      \"country\":\"{{$randomCountry}}\",\r\n      \"subdivision\":\"CA\",\r\n      \"zipCode\":\"{{zipCode}}\",\r\n      \"phoneNumber\":\"{{$randomPhoneNumber}}\"\r\n   },\r\n   \"setAsDefault\":true\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://addresses.wixapps.net/_api/addresses-web/v1/addresses",
+					"protocol": "https",
+					"host": [
+						"addresses",
+						"wixapps",
+						"net"
+					],
+					"path": [
+						"_api",
+						"addresses-web",
+						"v1",
+						"addresses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all adresses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3a44cc6f-4779-4094-b944-b55c3fbee682",
+						"exec": [
+							"if(responseCode.code === 200) {\r",
+							"    tests[\"Backend is available, response code is 200\"] = true;\r",
+							"} else if (responseCode.code === 401) {\r",
+							"    tests[\"Not authorised, Check access token or Log in\"] = false;\r",
+							"} else if (responseCode.code === 403) {\r",
+							"    tests[\"Forbiden\"] = false;\r",
+							"} else if (responseCode.code === 404) {\r",
+							"    tests[\"Not Found. Check if you made correct request\"] = false;\r",
+							"} else if (responseCode.code === 422) {\r",
+							"    tests[\"The instance is not valid\"] = false;\r",
+							"} else {\r",
+							"    tests[\"Something went wrong. Check response body\"] = false;\r",
+							"}\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"addresses\");    \r",
+							"});\r",
+							"pm.test(\"Response size is less than 10KB\", function () {\r",
+							"    pm.expect(pm.response.responseSize).to.be.below(10000);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "CvnZIKcKt35m9QA_2QLsPtOGQq7PKWmF6xo7drvPxzg.eyJpbnN0YW5jZUlkIjoiZjQ2Y2Q1MDItZjcyZi00NGY3LTk2MzgtNWRhMWRlYjBiNGU3IiwiYXBwRGVmSWQiOiIxNTA1Yjc3NS1lODg1LWViMWItYjY2NS0xZTQ4NWQ5YmY5MGUiLCJtZXRhU2l0ZUlkIjoiMjhiNzkzZDYtNTQyNC00MDU4LTgwNDktMDI2YTRkYjAyODJmIiwic2lnbkRhdGUiOiIyMDIwLTA2LTEzVDA1OjQyOjIzLjUwMVoiLCJ1aWQiOiIyYjQ4NDJlNC05OWVhLTQ0YTMtYTQ0Ny1jZDZlNTA0ZTJmMjEiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjkxMGQ3NGUyLTgxNmEtNDUwZi1hMTI3LTRlZmU2MmVhMDZlZiIsImJpVG9rZW4iOiJkY2RiNDZkNC1hMzBiLTA0YWYtMTY3MS01ZmNiOTMwMDljYzgiLCJzaXRlT3duZXJJZCI6ImY5MTRmMTFjLWFhYjMtNDUyNy04ZDRlLWJhYjc2MjE0M2E2MCIsImV4cGlyYXRpb25EYXRlIjoiMjAyMC0wNi0xM1QwOTo0MjoyMy41MDFaIiwiaGFzVXNlclJvbGUiOmZhbHNlfQ"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://addresses.wixapps.net/_api/addresses-web/v1/addresses",
+					"protocol": "https",
+					"host": [
+						"addresses",
+						"wixapps",
+						"net"
+					],
+					"path": [
+						"_api",
+						"addresses-web",
+						"v1",
+						"addresses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Specific addresses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dbc38ffe-7ab3-4f30-9f49-ae9d7654ab26",
+						"exec": [
+							"if(responseCode.code === 200) {\r",
+							"    tests[\"Backend is available, response code is 200\"] = true;\r",
+							"} else if (responseCode.code === 401) {\r",
+							"    tests[\"Not authorised, Check access token or Log in\"] = false;\r",
+							"} else if (responseCode.code === 403) {\r",
+							"    tests[\"Forbiden\"] = false;\r",
+							"} else if (responseCode.code === 404) {\r",
+							"    tests[\"Not Found. Check if you made correct request\"] = false;\r",
+							"} else if (responseCode.code === 422) {\r",
+							"    tests[\"The instance is not valid\"] = false;\r",
+							"} else {\r",
+							"    tests[\"Something went wrong. Check response body\"] = false;\r",
+							"}\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"id\");    \r",
+							"});\r",
+							"pm.test(\"Response size is less than 2KB\", function () {\r",
+							"    pm.expect(pm.response.responseSize).to.be.below(2000);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "CvnZIKcKt35m9QA_2QLsPtOGQq7PKWmF6xo7drvPxzg.eyJpbnN0YW5jZUlkIjoiZjQ2Y2Q1MDItZjcyZi00NGY3LTk2MzgtNWRhMWRlYjBiNGU3IiwiYXBwRGVmSWQiOiIxNTA1Yjc3NS1lODg1LWViMWItYjY2NS0xZTQ4NWQ5YmY5MGUiLCJtZXRhU2l0ZUlkIjoiMjhiNzkzZDYtNTQyNC00MDU4LTgwNDktMDI2YTRkYjAyODJmIiwic2lnbkRhdGUiOiIyMDIwLTA2LTEzVDA1OjQyOjIzLjUwMVoiLCJ1aWQiOiIyYjQ4NDJlNC05OWVhLTQ0YTMtYTQ0Ny1jZDZlNTA0ZTJmMjEiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjkxMGQ3NGUyLTgxNmEtNDUwZi1hMTI3LTRlZmU2MmVhMDZlZiIsImJpVG9rZW4iOiJkY2RiNDZkNC1hMzBiLTA0YWYtMTY3MS01ZmNiOTMwMDljYzgiLCJzaXRlT3duZXJJZCI6ImY5MTRmMTFjLWFhYjMtNDUyNy04ZDRlLWJhYjc2MjE0M2E2MCIsImV4cGlyYXRpb25EYXRlIjoiMjAyMC0wNi0xM1QwOTo0MjoyMy41MDFaIiwiaGFzVXNlclJvbGUiOmZhbHNlfQ"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://addresses.wixapps.net/_api/addresses-web/v1/addresses/?id={{id}}",
+					"protocol": "https",
+					"host": [
+						"addresses",
+						"wixapps",
+						"net"
+					],
+					"path": [
+						"_api",
+						"addresses-web",
+						"v1",
+						"addresses",
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Patch address",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4d0c06b0-804f-4d9b-8e60-093ada4e6ff2",
+						"exec": [
+							"if(responseCode.code === 200) {\r",
+							"    tests[\"Backend is available, response code is 200\"] = true;\r",
+							"} else if (responseCode.code === 401) {\r",
+							"    tests[\"Not authorised, Check access token or Log in\"] = false;\r",
+							"} else if (responseCode.code === 403) {\r",
+							"    tests[\"Forbiden\"] = false;\r",
+							"} else if (responseCode.code === 404) {\r",
+							"    tests[\"Not Found. Check if you made correct request\"] = false;\r",
+							"} else if (responseCode.code === 422) {\r",
+							"    tests[\"The instance is not valid\"] = false;\r",
+							"} else {\r",
+							"    tests[\"Something went wrong. Check response body\"] = false;\r",
+							"}\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"{}\");    \r",
+							"});\r",
+							"pm.test(\"Response size is less than 2KB\", function () {\r",
+							"    pm.expect(pm.response.responseSize).to.be.below(2000);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a10cd534-de86-41d2-9f47-1c7b44651207",
+						"exec": [
+							"pm.environment.set(\"company\", \"Google-\" + new Date().getTime())\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "CvnZIKcKt35m9QA_2QLsPtOGQq7PKWmF6xo7drvPxzg.eyJpbnN0YW5jZUlkIjoiZjQ2Y2Q1MDItZjcyZi00NGY3LTk2MzgtNWRhMWRlYjBiNGU3IiwiYXBwRGVmSWQiOiIxNTA1Yjc3NS1lODg1LWViMWItYjY2NS0xZTQ4NWQ5YmY5MGUiLCJtZXRhU2l0ZUlkIjoiMjhiNzkzZDYtNTQyNC00MDU4LTgwNDktMDI2YTRkYjAyODJmIiwic2lnbkRhdGUiOiIyMDIwLTA2LTEzVDA1OjQyOjIzLjUwMVoiLCJ1aWQiOiIyYjQ4NDJlNC05OWVhLTQ0YTMtYTQ0Ny1jZDZlNTA0ZTJmMjEiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjkxMGQ3NGUyLTgxNmEtNDUwZi1hMTI3LTRlZmU2MmVhMDZlZiIsImJpVG9rZW4iOiJkY2RiNDZkNC1hMzBiLTA0YWYtMTY3MS01ZmNiOTMwMDljYzgiLCJzaXRlT3duZXJJZCI6ImY5MTRmMTFjLWFhYjMtNDUyNy04ZDRlLWJhYjc2MjE0M2E2MCIsImV4cGlyYXRpb25EYXRlIjoiMjAyMC0wNi0xM1QwOTo0MjoyMy41MDFaIiwiaGFzVXNlclJvbGUiOmZhbHNlfQ"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"address\":{\r\n      \"fullName\":{\r\n         \"firstName\":\"{{$randomFirstName}}\",\r\n         \"lastName\":\"{{$randomLastName}}\"\r\n      },\r\n      \"company\":\"{{$randomCompanyName}}\",\r\n      \"taxInfo\":{\r\n         \"id\":null,\r\n         \"type\":null\r\n      },\r\n      \"addressLine1\":\"{{$randomStreetAddress}}\",\r\n      \"addressLine2\":\"Unit {{addressLine2}}\",\r\n      \"street\":{\r\n         \"name\":null,\r\n         \"number\":null\r\n      },\r\n      \"city\":\"{{$randomCity}}\",\r\n      \"country\":\"{{$randomCountry}}\",\r\n      \"subdivision\":\"CA\",\r\n      \"zipCode\":\"{{zipCode}}\",\r\n      \"phoneNumber\":\"{{$randomPhoneNumber}}\"\r\n   },\r\n   \"setAsDefault\":true,\r\n    \"fieldMask\": {\r\n\t\t\"paths\": [\"fullName.firstName\", \"fullName.lastName\", \"company\", \"addressLine1\", \"addressLine2\", \"city\", \"country\", \"subdivision\", \"zipCode\", \"phoneNumber\", \"setAsDefault\"]\r\n\t}\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://addresses.wixapps.net/_api/addresses-web/v1/addresses/?id={{id}}",
+					"protocol": "https",
+					"host": [
+						"addresses",
+						"wixapps",
+						"net"
+					],
+					"path": [
+						"_api",
+						"addresses-web",
+						"v1",
+						"addresses",
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "negative test cases No First Name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "19fb206c-7dc3-4a22-afa1-b8c7c63fe4ca",
+						"exec": [
+							"if(responseCode.code === 400) {\r",
+							"    tests[\"Negative test pass\"] = true;\r",
+							"} else if (responseCode.code === 401) {\r",
+							"    tests[\"Not authorised, Check access token or Log in\"] = false;\r",
+							"} else if (responseCode.code === 403) {\r",
+							"    tests[\"Forbiden\"] = false;\r",
+							"} else if (responseCode.code === 404) {\r",
+							"    tests[\"Not Found. Check if you made correct request\"] = false;\r",
+							"} else if (responseCode.code === 422) {\r",
+							"    tests[\"The instance is not valid\"] = false;\r",
+							"} else {\r",
+							"    tests[\"Something went wrong. Check response body\"] = false;\r",
+							"}\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"missing_required_field\");\r",
+							"});\r",
+							"pm.test(\"Response size is less than 2KB\", function () {\r",
+							"    pm.expect(pm.response.responseSize).to.be.below(2000);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ae9f39ed-8384-4d0c-9c9d-53ee66cfa9e2",
+						"exec": [
+							"pm.environment.set(\"company\", \"Google-\" + new Date().getTime())\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "CvnZIKcKt35m9QA_2QLsPtOGQq7PKWmF6xo7drvPxzg.eyJpbnN0YW5jZUlkIjoiZjQ2Y2Q1MDItZjcyZi00NGY3LTk2MzgtNWRhMWRlYjBiNGU3IiwiYXBwRGVmSWQiOiIxNTA1Yjc3NS1lODg1LWViMWItYjY2NS0xZTQ4NWQ5YmY5MGUiLCJtZXRhU2l0ZUlkIjoiMjhiNzkzZDYtNTQyNC00MDU4LTgwNDktMDI2YTRkYjAyODJmIiwic2lnbkRhdGUiOiIyMDIwLTA2LTEzVDA1OjQyOjIzLjUwMVoiLCJ1aWQiOiIyYjQ4NDJlNC05OWVhLTQ0YTMtYTQ0Ny1jZDZlNTA0ZTJmMjEiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjkxMGQ3NGUyLTgxNmEtNDUwZi1hMTI3LTRlZmU2MmVhMDZlZiIsImJpVG9rZW4iOiJkY2RiNDZkNC1hMzBiLTA0YWYtMTY3MS01ZmNiOTMwMDljYzgiLCJzaXRlT3duZXJJZCI6ImY5MTRmMTFjLWFhYjMtNDUyNy04ZDRlLWJhYjc2MjE0M2E2MCIsImV4cGlyYXRpb25EYXRlIjoiMjAyMC0wNi0xM1QwOTo0MjoyMy41MDFaIiwiaGFzVXNlclJvbGUiOmZhbHNlfQ"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"address\":{\r\n      \"fullName\":{\r\n         \"firstName\":\"{{$randomFirstName}}\",\r\n         \"lastName\":\"{{$randomLastName}}\"\r\n      },\r\n      \"company\":\"{{$randomCompanyName}}\",\r\n      \"taxInfo\":{\r\n         \"id\":null,\r\n         \"type\":null\r\n      },\r\n      \"addressLine1\":\"{{$randomStreetAddress}}\",\r\n      \"addressLine2\":\"Unit {{addressLine2}}\",\r\n      \"street\":{\r\n         \"name\":null,\r\n         \"number\":null\r\n      },\r\n      \"city\":\"{{$randomCity}}\",\r\n      \"country\":\"{{$randomCountry}}\",\r\n      \"subdivision\":\"CA\",\r\n      \"zipCode\":\"{{zipCode}}\",\r\n      \"phoneNumber\":\"{{$randomPhoneNumber}}\"\r\n   },\r\n   \"setAsDefault\":true,\r\n    \"fieldMask\": {\r\n\t\t\"paths\": [\"fullName.firstName\", \"fullName.lastName\", \"company\", \"addressLine1\", \"addressLine2\", \"city\", \"country\", \"subdivision\", \"zipCode\", \"phoneNumber\", \"setAsDefault\"]\r\n\t}\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://addresses.wixapps.net/_api/addresses-web/v1/addresses/?id={{id}}",
+					"protocol": "https",
+					"host": [
+						"addresses",
+						"wixapps",
+						"net"
+					],
+					"path": [
+						"_api",
+						"addresses-web",
+						"v1",
+						"addresses",
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NO Last Name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1a9f0ebc-9570-440e-94fa-404b337be632",
+						"exec": [
+							"if(responseCode.code === 400) {\r",
+							"    tests[\"Negative test pass\"] = true;\r",
+							"} else if (responseCode.code === 401) {\r",
+							"    tests[\"Not authorised, Check access token or Log in\"] = false;\r",
+							"} else if (responseCode.code === 403) {\r",
+							"    tests[\"Forbiden\"] = false;\r",
+							"} else if (responseCode.code === 404) {\r",
+							"    tests[\"Not Found. Check if you made correct request\"] = false;\r",
+							"} else if (responseCode.code === 422) {\r",
+							"    tests[\"The instance is not valid\"] = false;\r",
+							"} else {\r",
+							"    tests[\"Something went wrong. Check response body\"] = false;\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"missing_required_field\");\r",
+							"});\r",
+							"pm.test(\"Response size is less than 2KB\", function () {\r",
+							"    pm.expect(pm.response.responseSize).to.be.below(2000);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "370d7eee-388b-44d9-ac07-3535eab12e54",
+						"exec": [
+							"pm.environment.set(\"company\", \"Google-\" + new Date().getTime())\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "CvnZIKcKt35m9QA_2QLsPtOGQq7PKWmF6xo7drvPxzg.eyJpbnN0YW5jZUlkIjoiZjQ2Y2Q1MDItZjcyZi00NGY3LTk2MzgtNWRhMWRlYjBiNGU3IiwiYXBwRGVmSWQiOiIxNTA1Yjc3NS1lODg1LWViMWItYjY2NS0xZTQ4NWQ5YmY5MGUiLCJtZXRhU2l0ZUlkIjoiMjhiNzkzZDYtNTQyNC00MDU4LTgwNDktMDI2YTRkYjAyODJmIiwic2lnbkRhdGUiOiIyMDIwLTA2LTEzVDA1OjQyOjIzLjUwMVoiLCJ1aWQiOiIyYjQ4NDJlNC05OWVhLTQ0YTMtYTQ0Ny1jZDZlNTA0ZTJmMjEiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjkxMGQ3NGUyLTgxNmEtNDUwZi1hMTI3LTRlZmU2MmVhMDZlZiIsImJpVG9rZW4iOiJkY2RiNDZkNC1hMzBiLTA0YWYtMTY3MS01ZmNiOTMwMDljYzgiLCJzaXRlT3duZXJJZCI6ImY5MTRmMTFjLWFhYjMtNDUyNy04ZDRlLWJhYjc2MjE0M2E2MCIsImV4cGlyYXRpb25EYXRlIjoiMjAyMC0wNi0xM1QwOTo0MjoyMy41MDFaIiwiaGFzVXNlclJvbGUiOmZhbHNlfQ"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"address\":{\r\n      \"fullName\":{\r\n         \"firstName\":\"{{$randomFirstName}}\",\r\n         \"lastName\":\"{{$randomLastName}}\"\r\n      },\r\n      \"company\":\"{{$randomCompanyName}}\",\r\n      \"taxInfo\":{\r\n         \"id\":null,\r\n         \"type\":null\r\n      },\r\n      \"addressLine1\":\"{{$randomStreetAddress}}\",\r\n      \"addressLine2\":\"Unit {{addressLine2}}\",\r\n      \"street\":{\r\n         \"name\":null,\r\n         \"number\":null\r\n      },\r\n      \"city\":\"{{$randomCity}}\",\r\n      \"country\":\"{{$randomCountry}}\",\r\n      \"subdivision\":\"CA\",\r\n      \"zipCode\":\"{{zipCode}}\",\r\n      \"phoneNumber\":\"{{$randomPhoneNumber}}\"\r\n   },\r\n   \"setAsDefault\":true,\r\n    \"fieldMask\": {\r\n\t\t\"paths\": [\"fullName.firstName\", \"fullName.lastName\", \"company\", \"addressLine1\", \"addressLine2\", \"city\", \"country\", \"subdivision\", \"zipCode\", \"phoneNumber\", \"setAsDefault\"]\r\n\t}\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://addresses.wixapps.net/_api/addresses-web/v1/addresses/?id={{id}}",
+					"protocol": "https",
+					"host": [
+						"addresses",
+						"wixapps",
+						"net"
+					],
+					"path": [
+						"_api",
+						"addresses-web",
+						"v1",
+						"addresses",
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NO Last Name and  first",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9d236dd5-2c58-4d9d-9694-f2f936958c13",
+						"exec": [
+							"if(responseCode.code === 400) {\r",
+							"    tests[\"Negative test pass\"] = true;\r",
+							"} else if (responseCode.code === 401) {\r",
+							"    tests[\"Not authorised, Check access token or Log in\"] = false;\r",
+							"} else if (responseCode.code === 403) {\r",
+							"    tests[\"Forbiden\"] = false;\r",
+							"} else if (responseCode.code === 404) {\r",
+							"    tests[\"Not Found. Check if you made correct request\"] = false;\r",
+							"} else if (responseCode.code === 422) {\r",
+							"    tests[\"The instance is not valid\"] = false;\r",
+							"} else {\r",
+							"    tests[\"Something went wrong. Check response body\"] = false;\r",
+							"}\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"missing_required_field\");\r",
+							"});\r",
+							"pm.test(\"Response size is less than 2KB\", function () {\r",
+							"    pm.expect(pm.response.responseSize).to.be.below(2000);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "4f036008-23d2-4638-aea9-2593ae11b1c2",
+						"exec": [
+							"pm.environment.set(\"company\", \"Google-\" + new Date().getTime())\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "CvnZIKcKt35m9QA_2QLsPtOGQq7PKWmF6xo7drvPxzg.eyJpbnN0YW5jZUlkIjoiZjQ2Y2Q1MDItZjcyZi00NGY3LTk2MzgtNWRhMWRlYjBiNGU3IiwiYXBwRGVmSWQiOiIxNTA1Yjc3NS1lODg1LWViMWItYjY2NS0xZTQ4NWQ5YmY5MGUiLCJtZXRhU2l0ZUlkIjoiMjhiNzkzZDYtNTQyNC00MDU4LTgwNDktMDI2YTRkYjAyODJmIiwic2lnbkRhdGUiOiIyMDIwLTA2LTEzVDA1OjQyOjIzLjUwMVoiLCJ1aWQiOiIyYjQ4NDJlNC05OWVhLTQ0YTMtYTQ0Ny1jZDZlNTA0ZTJmMjEiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjkxMGQ3NGUyLTgxNmEtNDUwZi1hMTI3LTRlZmU2MmVhMDZlZiIsImJpVG9rZW4iOiJkY2RiNDZkNC1hMzBiLTA0YWYtMTY3MS01ZmNiOTMwMDljYzgiLCJzaXRlT3duZXJJZCI6ImY5MTRmMTFjLWFhYjMtNDUyNy04ZDRlLWJhYjc2MjE0M2E2MCIsImV4cGlyYXRpb25EYXRlIjoiMjAyMC0wNi0xM1QwOTo0MjoyMy41MDFaIiwiaGFzVXNlclJvbGUiOmZhbHNlfQ"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"address\":{\r\n      \"fullName\":{\r\n         \"firstName\":\"{{$randomFirstName}}\",\r\n         \"lastName\":\"{{$randomLastName}}\"\r\n      },\r\n      \"company\":\"{{$randomCompanyName}}\",\r\n      \"taxInfo\":{\r\n         \"id\":null,\r\n         \"type\":null\r\n      },\r\n      \"addressLine1\":\"{{$randomStreetAddress}}\",\r\n      \"addressLine2\":\"Unit {{addressLine2}}\",\r\n      \"street\":{\r\n         \"name\":null,\r\n         \"number\":null\r\n      },\r\n      \"city\":\"{{$randomCity}}\",\r\n      \"country\":\"{{$randomCountry}}\",\r\n      \"subdivision\":\"CA\",\r\n      \"zipCode\":\"{{zipCode}}\",\r\n      \"phoneNumber\":\"{{$randomPhoneNumber}}\"\r\n   },\r\n   \"setAsDefault\":true,\r\n    \"fieldMask\": {\r\n\t\t\"paths\": [\"fullName.firstName\", \"fullName.lastName\", \"company\", \"addressLine1\", \"addressLine2\", \"city\", \"country\", \"subdivision\", \"zipCode\", \"phoneNumber\", \"setAsDefault\"]\r\n\t}\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://addresses.wixapps.net/_api/addresses-web/v1/addresses/?id={{id}}",
+					"protocol": "https",
+					"host": [
+						"addresses",
+						"wixapps",
+						"net"
+					],
+					"path": [
+						"_api",
+						"addresses-web",
+						"v1",
+						"addresses",
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post Copy Copy Copy",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "CvnZIKcKt35m9QA_2QLsPtOGQq7PKWmF6xo7drvPxzg.eyJpbnN0YW5jZUlkIjoiZjQ2Y2Q1MDItZjcyZi00NGY3LTk2MzgtNWRhMWRlYjBiNGU3IiwiYXBwRGVmSWQiOiIxNTA1Yjc3NS1lODg1LWViMWItYjY2NS0xZTQ4NWQ5YmY5MGUiLCJtZXRhU2l0ZUlkIjoiMjhiNzkzZDYtNTQyNC00MDU4LTgwNDktMDI2YTRkYjAyODJmIiwic2lnbkRhdGUiOiIyMDIwLTA2LTEzVDA1OjQyOjIzLjUwMVoiLCJ1aWQiOiIyYjQ4NDJlNC05OWVhLTQ0YTMtYTQ0Ny1jZDZlNTA0ZTJmMjEiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjkxMGQ3NGUyLTgxNmEtNDUwZi1hMTI3LTRlZmU2MmVhMDZlZiIsImJpVG9rZW4iOiJkY2RiNDZkNC1hMzBiLTA0YWYtMTY3MS01ZmNiOTMwMDljYzgiLCJzaXRlT3duZXJJZCI6ImY5MTRmMTFjLWFhYjMtNDUyNy04ZDRlLWJhYjc2MjE0M2E2MCIsImV4cGlyYXRpb25EYXRlIjoiMjAyMC0wNi0xM1QwOTo0MjoyMy41MDFaIiwiaGFzVXNlclJvbGUiOmZhbHNlfQ"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://addresses.wixapps.net/_api/addresses-web/v1/addresses/?id={{id}}",
+					"protocol": "https",
+					"host": [
+						"addresses",
+						"wixapps",
+						"net"
+					],
+					"path": [
+						"_api",
+						"addresses-web",
+						"v1",
+						"addresses",
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
